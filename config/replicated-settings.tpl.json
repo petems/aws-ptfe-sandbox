@@ -1,0 +1,36 @@
+{
+    "aws_access_key_id": {},
+    "aws_instance_profile": {},
+    "aws_secret_access_key": {},
+    "ca_certs": {},
+    "capacity_concurrency": {
+      "value": "10"
+    },
+    "capacity_memory": {
+      "value": "256"
+    },
+    "disk_path": {
+    },
+    "hostname": {
+        "value": "CHANGEME"
+    },
+    "installation_type": {
+        "value": "prod"
+    },
+    "pg_dbname": {},
+    "pg_extra_params": {},
+    "pg_netloc": {},
+    "pg_password": {},
+    "pg_user": {},
+    "placement": {},
+    "production_type": {
+        "value": "disk"
+    },
+    "s3_bucket": {},
+    "s3_endpoint": {},
+    "s3_region": {},
+    "s3_sse": {},
+    "s3_sse_kms_key_id": {},
+    "vault_path": {},
+    "vault_store_snapshot": {}
+}
