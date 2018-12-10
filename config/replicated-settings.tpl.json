@@ -10,9 +10,10 @@
       "value": "256"
     },
     "disk_path": {
+        "value": "/data/"
     },
     "hostname": {
-        "value": "CHANGEME"
+        "value": "ptfe.selfsigned.example.com"
     },
     "installation_type": {
         "value": "prod"

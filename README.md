@@ -31,3 +31,33 @@ terraform plan
 ```
 terraform apply
 ```
+
+## Certificate Setup
+
+This setup uses a cert created by `mkcert`:
+
+```
+mkcert 'ptfe-selfsigned.example.com'
+Using the local CA at "/Users/psouter/Library/Application Support/mkcert" ✨
+
+Created a new certificate valid for the following names 📜
+ - "ptfe-selfsigned.example.com"
+
+The certificate is at "./ptfe-selfsigned.example.com.pem" and the key at "./ptfe-selfsigned.example.com-key.pem" ✅
+```
+
+This is then uploaded to the box, and the CA added to the PTFE install config:
+
+```
+cat "$(mkcert -CAROOT)/rootCA.pem"
+-----BEGIN CERTIFICATE-----:
+FOO-etc
+```
+
+```
+"ca_certs": {
+        "value": "-----BEGIN CERTIFICATE-----\n
+        FOO-etc
+        \n-----END CERTIFICATE-----"
+    },
+```

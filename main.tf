@@ -170,6 +170,36 @@ resource "aws_instance" "ptfe_instance" {
   }
 
   provisioner "file" {
+    source      = "${path.module}/config/ptfe.selfsigned.example.com+5.pem"
+    destination = "/var/ptfe-installer/ptfe.selfsigned.example.com+5.pem"
+
+    connection {
+      user        = "ubuntu"
+      private_key = "${tls_private_key.gen_ssh_key.private_key_pem}"
+    }
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/config/ptfe.selfsigned.example.com+5-key.pem"
+    destination = "/var/ptfe-installer/ptfe.selfsigned.example.com+5-key.pem"
+
+    connection {
+      user        = "ubuntu"
+      private_key = "${tls_private_key.gen_ssh_key.private_key_pem}"
+    }
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/config/license.rli"
+    destination = "/var/ptfe-installer/license.rli"
+
+    connection {
+      user        = "ubuntu"
+      private_key = "${tls_private_key.gen_ssh_key.private_key_pem}"
+    }
+  }
+
+  provisioner "file" {
     content     = "${data.template_file.replicated_conf.rendered}"
     destination = "/var/ptfe-installer/replicated.conf"
 
@@ -189,14 +219,22 @@ resource "aws_instance" "ptfe_instance" {
     }
   }
 
+
   provisioner "remote-exec" {
     inline = [
+      "echo \"$(curl http://169.254.169.254/latest/meta-data/public-ipv4) ptfe.selfsigned.example.com\" > /etc/hosts",
       "sudo cp /var/ptfe-installer/replicated.conf /etc/replicated.conf",
-      "sudo sed -i 's/CHANGEME/${aws_instance.ptfe_instance.public_dns}/' /etc/replicated.conf",
-      "sudo sed -i 's/CHANGEME/${aws_instance.ptfe_instance.public_dns}/' /var/ptfe-installer/settings.json",
+      "sudo cp /var/ptfe-installer/ptfe.selfsigned.example.com+5.pem /etc/ptfe.selfsigned.example.com+5.pem",
+      "sudo cp /var/ptfe-installer/ptfe.selfsigned.example.com+5-key.pem /etc/ptfe.selfsigned.example.com+5-key.pem",
+      "sudo chmod 0644 /etc/ptfe.selfsigned.example.com+5.pem",
+      "sudo chmod 0644 /etc/ptfe.selfsigned.example.com+5-key.pem",
+      "sudo chmod 0644 /etc/ptfe.selfsigned.example.com+5-key.pem",
       "sudo chmod 0644 /etc/replicated.conf /var/ptfe-installer/settings.json /var/ptfe-installer/license.rli",
-      "curl -sSL -o install.sh https://get.replicated.com/docker/terraformenterprise/stable",
-      "sudo bash install.sh no-proxy"
+      "wget https://example-airgap-download-location.foo.com/TerraformEnterprise-307.airgap?dl=1 -O /var/ptfe-installer/TerraformEnterprise-307.airgap",
+      "wget https://s3.amazonaws.com/replicated-airgap-work/replicated.tar.gz -P /home/ubuntu/",
+      "curl -s https://get.replicated.com/docker-install.sh | sudo bash",
+      "tar -xvf replicated.tar.gz",
+      "sudo bash install.sh no-proxy local-address=`curl -s http://169.254.169.254/latest/meta-data/local-ipv4`"
     ]
 
     connection {
